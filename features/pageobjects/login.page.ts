@@ -1,4 +1,5 @@
 import { $ } from '@wdio/globals';
+import allure from '@wdio/allure-reporter'; 
 
 class LoginPage {
     public get emailInput() { return $('#text-input-email'); }
@@ -23,21 +24,32 @@ class LoginPage {
     }
 
     public async bypass2FAIfPresent() {
-        const is2FADialogPresent = await this.doThisLaterLink.waitForDisplayed({ timeout: 5000, reverse: false });
+        // Corrected: Removed 'timeout' from isDisplayed() as it's not a valid parameter.
+        // isDisplayed() checks immediate visibility.
+        const isDialogPresent = await this.doThisLaterLink.isDisplayed();
 
-        if (is2FADialogPresent) {
+        if (isDialogPresent) {
+            allure.addStep('2FA bypass dialog detected. Attempting to dismiss.');
             await this.doThisLaterLink.click();
             await this.doThisLaterLink.waitForDisplayed({ timeout: 10000, reverse: true, timeoutMsg: '2FA dialog did not disappear' });
+            allure.addStep('2FA bypass dialog dismissed.');
+        } else {
+            allure.addStep('No 2FA bypass dialog detected.');
         }
     }
 
-    public async goToDashboardIfPresent() {
-        const isGoToDashboardButtonPresent = await this.goToDashboardButton.waitForDisplayed({ timeout: 5000, reverse: false });
+  public async goToDashboardIfPresent() {
+    // Corrected: Removed the 'timeout' option from isDisplayed()
+    const isGoToDashboardButtonPresent = await this.goToDashboardButton.isDisplayed(); 
 
-        if (isGoToDashboardButtonPresent) {
-            await this.goToDashboardButton.click();
-            await this.goToDashboardButton.waitForDisplayed({ timeout: 15000, reverse: true, timeoutMsg: 'Go to dashboard button did not disappear' });
-        }
+    if (isGoToDashboardButtonPresent) {
+        allure.addStep('Go to Dashboard button detected. Clicking to proceed.');
+        await this.goToDashboardButton.click();
+        await this.goToDashboardButton.waitForDisplayed({ timeout: 20000, reverse: true, timeoutMsg: 'Go to dashboard button did not disappear' });
+        allure.addStep('Navigated to dashboard.');
+    } else {
+        allure.addStep('No Go to Dashboard button detected.');
+    }
     }
 }
 
