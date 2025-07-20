@@ -38,19 +38,29 @@ class ConnectionsPage {
         await this.dismissAskAIOverlayIfPresent();
     }
 
-    public async dismissAskAIOverlayIfPresent() {
-        const isAskAIPresent = await this.askAICloseButton.waitForDisplayed({ timeout: 5000, reverse: false });
+      public async dismissAskAIOverlayIfPresent() {
+        // Give a very small pause to allow the DOM to update if a pop-up appears dynamically.
+        // This is crucial for dynamically loaded elements.
+        await browser.pause(500);
+
+        // *** THIS IS THE CRUCIAL CHANGE ***
+        // Use isDisplayed() which returns a boolean and does NOT throw an error if the element is not found/displayed.
+        // It simply returns `false`.
+        const isAskAIPresent = await this.askAICloseButton.isDisplayed();
 
         if (isAskAIPresent) {
             allure.addStep('Ask AI overlay detected. Attempting to dismiss.');
+            // Wait for it to be clickable before clicking, if it's displayed but not ready.
+            await this.askAICloseButton.waitForClickable({ timeout: 5000, timeoutMsg: 'Ask AI close button not clickable.' });
             await this.askAICloseButton.click();
-            await this.askAICloseButton.waitForDisplayed({ timeout: 10000, reverse: true, timeoutMsg: 'Ask AI overlay did not disappear' });
+            // Wait for the overlay to disappear, if it was clicked. This will throw if it doesn't.
+            await this.askAICloseButton.waitForDisplayed({ timeout: 10000, reverse: true, timeoutMsg: 'Ask AI overlay did not disappear after clicking close.' });
             allure.addStep('Ask AI overlay dismissed.');
         } else {
+            // This path will be taken if the AI chatbot is NOT present, and it will not throw an error.
             allure.addStep('No Ask AI overlay detected.');
         }
     }
-
     public async getDataPlaneUrl(): Promise<string> {
         await this.dataPlaneUrlElement.waitForDisplayed({ timeout: 10000 });
         const url = await this.dataPlaneUrlElement.getText();
