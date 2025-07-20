@@ -3,19 +3,19 @@ import allure from '@wdio/allure-reporter';
 
 class DestinationDetailsPage {
     public get eventsTab() {
-        return $('button=Events'); // PLACEHOLDER: Verify this selector
+        return $('//div[@role="tab"][normalize-space()="Events"]'); // PLACEHOLDER: Verify this selector
     }
 
     public get deliveredEventsCount() {
-        return $('[data-test-id="delivered-events-count"]'); // PLACEHOLDER: Verify this selector
+        return $('//div[@class="sc-hHvloA bqDHF"]//div[1]//div[1]'); // PLACEHOLDER: Verify this selector
     }
 
     public get failedEventsCount() {
-        return $('[data-test-id="failed-events-count"]'); // PLACEHOLDER: Verify this selector
+        return $('//div[@class="sc-ezGUFx sc-bgHAhq gEzaRR gVmjkq"]//div[3]//div[1]'); // PLACEHOLDER: Verify this selector
     }
 
     public get refreshButton() {
-        return $('button=Refresh'); // PLACEHOLDER: Verify this selector
+        return $('//span[normalize-space()="Refresh"]'); // PLACEHOLDER: Verify this selector
     }
 
     public async navigateToEventsTab() {

@@ -11,6 +11,7 @@ import DestinationDetailsPage from '../pageobjects/destination_details.page';
 let dataPlaneUrl: string;
 let httpSourceWriteKey: string; // This variable will be populated by the UI extraction, but API will use hardcoded for now
 
+
 Given('I am logged in to the Rudderstack application', async () => {
   allure.addStep('Logging in to Rudderstack application');
   await LoginPage.open();
@@ -123,14 +124,34 @@ When('I navigate to the Events tab', async () => {
   allure.addStep('Navigating to Events tab and refreshing counts');
   await DestinationDetailsPage.navigateToEventsTab();
   allure.addStep('On Events tab, counts should be updated.');
+
+  // Removed the logic for reading and storing initialDeliveredEventsCount.
+  // This step will now only focus on navigating and refreshing the tab.
 });
+
 
 Then('the delivered events count should be {string}', async (expectedCount: string) => {
   allure.addStep(`Verifying delivered events count is "${expectedCount}"`);
-  const deliveredCount = await DestinationDetailsPage.getDeliveredEventsCount();
-  expect(deliveredCount).toEqual(expectedCount);
-  allure.addStep(`Delivered events count matched: ${deliveredCount}.`);
+
+  const expectedNumericCount = parseInt(expectedCount, 10);
+
+  // Instead of a long waitUntil for the *value* to change,
+  // we now rely on the refresh logic in navigateToEventsTab
+  // to have updated the UI.
+  // We only need to ensure the element itself is displayed,
+  // which DestinationDetailsPage.getDeliveredEventsCount() already does internally
+  // with its own waitForDisplayed.
+
+  const finalDeliveredCountText = await DestinationDetailsPage.getDeliveredEventsCount();
+  const finalDeliveredCountNumeric = parseInt(finalDeliveredCountText, 10);
+
+  allure.addStep(`Final Delivered Count read: ${finalDeliveredCountNumeric}, Expected: ${expectedNumericCount}`);
+
+  // Assert directly, assuming the UI is now up-to-date
+  expect(finalDeliveredCountNumeric).toEqual(expectedNumericCount);
+  allure.addStep(`Delivered events count matched: ${finalDeliveredCountNumeric}.`);
 });
+
 
 Then('the failed events count should be {string}', async (expectedCount: string) => {
   allure.addStep(`Verifying failed events count is "${expectedCount}"`);
