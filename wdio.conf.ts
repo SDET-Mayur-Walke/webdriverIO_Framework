@@ -25,7 +25,21 @@ export const config: WebdriverIO.Config = {
     maxInstances: 10,
     capabilities: [{
         browserName: 'chrome',
-        // Removed: goog:chromeOptions for clipboard, as services are now managed by WDIO directly
+        // ADDED: goog:chromeOptions for CI compatibility
+        'goog:chromeOptions': {
+            args: [
+                '--headless=new',           // Run Chrome in new headless mode for CI
+                '--disable-gpu',            // Disable GPU hardware acceleration
+                '--no-sandbox',             // Disable sandbox (often needed in Linux CI environments like GitHub Actions)
+                '--disable-dev-shm-usage',  // Overcomes limited shared memory resource problems
+                '--window-size=1920,1080',  // Set a consistent window size
+                '--whitelisted-ips=""'      // Allow connections from all IPs, similar to --allowed-ips=*
+            ],
+            prefs: {
+                // Ensure clipboard manager leak detection is disabled as it might not be supported in headless
+                "profile.password_manager_leak_detection": false
+            }
+        },
     }],
 
     //
@@ -60,7 +74,7 @@ export const config: WebdriverIO.Config = {
         source: true,
         strict: false,
         tagExpression: '',
-        timeout: 60000,
+        timeout: 90000, // UPDATED: Increased Cucumber step timeout to 90 seconds
         ignoreUndefinedDefinitions: false
     },
 };
