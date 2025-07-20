@@ -82,7 +82,7 @@ When('I send an event to the HTTP source via API', async () => {
 
   // TEMPORARY: Use hardcoded Write Key to proceed with API call
   // Your actual Write Key is: 3057rKTRVudK6o1Ht06aTzhFaO
-  const actualWriteKeyForAPI = '3057rKTRVudK6o1Hl06aTzhFaO';
+//   const actualWriteKeyForAPI = '3057rKTRVudK6o1Hl06aTzhFaO';
 
   if (!dataPlaneUrl) {
     throw new Error('Data Plane URL not available. Ensure previous steps ran correctly.');
@@ -93,7 +93,7 @@ When('I send an event to the HTTP source via API', async () => {
   try {
     const response = await axios.post(apiUrl, eventPayload, {
       headers: {
-        'Authorization': `Basic ${Buffer.from(actualWriteKeyForAPI + ':').toString('base64')}`,
+        'Authorization': `Basic ${Buffer.from(httpSourceWriteKey  + ':').toString('base64')}`,
         'Content-Type': 'application/json'
       }
     });
