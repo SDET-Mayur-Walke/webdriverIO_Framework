@@ -24,8 +24,6 @@ class LoginPage {
     }
 
     public async bypass2FAIfPresent() {
-        // Corrected: Removed 'timeout' from isDisplayed() as it's not a valid parameter.
-        // isDisplayed() checks immediate visibility.
         const isDialogPresent = await this.doThisLaterLink.isDisplayed();
 
         if (isDialogPresent) {
@@ -39,7 +37,6 @@ class LoginPage {
     }
 
   public async goToDashboardIfPresent() {
-    // Corrected: Removed the 'timeout' option from isDisplayed()
     const isGoToDashboardButtonPresent = await this.goToDashboardButton.isDisplayed(); 
 
     if (isGoToDashboardButtonPresent) {

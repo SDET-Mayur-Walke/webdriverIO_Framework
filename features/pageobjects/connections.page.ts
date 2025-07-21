@@ -1,7 +1,5 @@
-// In: pageobjects/connections.page.ts
-
 import { $, browser } from '@wdio/globals';
-import allure from '@wdio/allure-reporter'; // Keep existing imports
+import allure from '@wdio/allure-reporter'; 
 
 class ConnectionsPage {
     public get dataPlaneUrlElement() {
@@ -13,10 +11,9 @@ class ConnectionsPage {
     }
 
     public get webhookDestinationLink() {
-        return $('span=my-webhook-destination'); // This is your element getter
+        return $('span=my-webhook-destination');
     }
 
-    // UPDATED: Selector for the "Ask AI" pop-up's Close button (X button)
     public get askAICloseButton() {
         return $('button[aria-label="Close"]');
     }
@@ -39,13 +36,7 @@ class ConnectionsPage {
     }
 
       public async dismissAskAIOverlayIfPresent() {
-        // Give a very small pause to allow the DOM to update if a pop-up appears dynamically.
-        // This is crucial for dynamically loaded elements.
         await browser.pause(500);
-
-        // *** THIS IS THE CRUCIAL CHANGE ***
-        // Use isDisplayed() which returns a boolean and does NOT throw an error if the element is not found/displayed.
-        // It simply returns `false`.
         const isAskAIPresent = await this.askAICloseButton.isDisplayed();
 
         if (isAskAIPresent) {
@@ -57,7 +48,6 @@ class ConnectionsPage {
             await this.askAICloseButton.waitForDisplayed({ timeout: 10000, reverse: true, timeoutMsg: 'Ask AI overlay did not disappear after clicking close.' });
             allure.addStep('Ask AI overlay dismissed.');
         } else {
-            // This path will be taken if the AI chatbot is NOT present, and it will not throw an error.
             allure.addStep('No Ask AI overlay detected.');
         }
     }
@@ -68,13 +58,11 @@ class ConnectionsPage {
         return url.trim();
     }
 
-    // Add the clickHttpSource method (if not already there based on your setup)
     public async clickHttpSource() {
         await this.httpSourceLink.waitForClickable({ timeout: 10000 });
         await this.httpSourceLink.click();
     }
 
-    // THIS IS THE NEW METHOD TO ADD
     public async clickWebhookDestination() {
         await this.webhookDestinationLink.waitForClickable({ timeout: 10000, timeoutMsg: 'Webhook Destination link not clickable.' });
         await this.webhookDestinationLink.click();
