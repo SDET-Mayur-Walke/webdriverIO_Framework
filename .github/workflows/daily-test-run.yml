@@ -2,8 +2,8 @@ name: Daily UI/API Test Run
 
 on:
   workflow_dispatch: 
-  schedule:
-    - cron: '30 5 * * *'
+  #schedule:
+    #- cron: '30 5 * * *'
 
 jobs:
   run-tests:
